@@ -26,15 +26,14 @@
               </p>
             </div>
           </div>
-          <!-- <div class="column">
+          <div class="column">
             <div class="notification is-info"
             v-for="t in tracks"
             :key="t.id">
-            <button class="delete"
-            @click="deleteTask(t.id)"></button>
-              {{t.title}} => {{t.time}}
+            <button class="delete"></button>
+              {{t.artists[0].name}} - {{t.name}}
             </div>
-          </div> -->
+          </div>
         </div>
       </div>
     </section>
@@ -48,14 +47,17 @@ export default {
   data () {
     return {
       searchQuery: '',
-      tracks: {}
+      tracks: []
     }
   },
   methods: {
     search () {
-      trackService.search(this.searchQuery).then(res => {
-        console.log(res)
-      })
+      if (!this.searchQuery) {
+        trackService.search(this.searchQuery).then(res => {
+          this.tracks = res.tracks.items
+          console.log(res)
+        })
+      }
     }
   }
 }

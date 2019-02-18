@@ -1,8 +1,60 @@
 <template>
   <div id="app">
-    <img src="./assets/logo.png">
-    <h1>{{ msg }}</h1>
-    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Possimus, unde similique quaerat culpa tenetur repudiandae officiis autem molestias! Aut ab magni eos perferendis, accusantium id commodi exercitationem eum officia recusandae.</p>
+    <section class="section">
+      <div class="container">
+        <div class="columns">
+          <div class="column">
+            <div class="field">
+              <label class="label">Nueva Tarea</label>
+              <div class="control">
+                <input class="is-large input"
+                placeholder="Agregar nueva tarea..."
+                type="text"
+                v-model="newTask.title">
+              </div>
+            </div>
+            <div class="field">
+              <label class="label">Tiempo</label>
+              <div class="control">
+                <input class="is-large input"
+                placeholder="0h..."
+                type="number"
+                v-model="newTask.time">
+              </div>
+            </div>
+            <div class="field is-grouped">
+              <p class="control">
+                <a class="button is-primary"
+                 @click="addTask()">
+                 Agregar Tarea
+                 </a>
+              </p>
+              <p class="control">
+                <a class="button is-danger"
+                @click="cancel()">&times;</a>
+              </p>
+            </div>
+          </div>
+          <div class="column">
+            <div class="notification is-info">
+              {{totalTime}}
+            </div>
+            <div class="notification is-info"
+            v-for="t in tasks"
+            :key="t.id">
+            <button class="delete"
+            @click="deleteTask(t.id)"></button>
+              {{t.title}} => {{t.time}}
+            </div>
+            <!-- <ul>
+              <li>Tarea 1</li>
+              <li>Tarea 2</li>
+              <li>Tarea 3</li>
+            </ul> -->
+          </div>
+        </div>
+      </div>
+    </section>
   </div>
 </template>
 
@@ -11,7 +63,48 @@ export default {
   name: 'app',
   data () {
     return {
-      msg: 'Hola Vue'
+      name: '',
+      tasks: [],
+      newTask: {
+        title: '',
+        time: 0
+      }
+    }
+  },
+  computed: {
+    totalTime () {
+      let totalTime = 0
+      this.tasks.forEach(e => {
+        totalTime += parseInt(e.time)
+      })
+      return totalTime
+    }
+  },
+  methods: {
+    addTask () {
+      if (this.newTask.title !== '' && this.newTask.time !== 0) {
+        let info = {
+          title: this.newTask.title,
+          time: this.newTask.time
+        }
+        // agrega nueva tarea al arreglo de tasks
+        this.tasks.push(info)
+        // Almacenamos el array en localStorage
+        // El método JSON.stringify() convierte un valor dado en javascript a una cadena  JSON
+        localStorage.setItem('tasks', JSON.stringify(this.tasks))
+        console.log(localStorage.setItem('tasks', JSON.stringify(this.tasks)))
+        this.newTask.title = ''
+        this.newTask.time = 0
+      }
+    },
+    cancel () {
+      this.newTask.title = ''
+      this.newTask.time = 0
+    },
+    deleteTask (id) {
+      console.log(id)
+      this.tasks.splice(id, 1)
+      localStorage.setItem('tasks', JSON.stringify(this.tasks))
     }
   }
 }
@@ -19,30 +112,5 @@ export default {
 
 <style lang="scss">
 @import './scss/main.scss';
-#app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
 
-h1, h2 {
-  font-weight: normal;
-}
-
-ul {
-  list-style-type: none;
-  padding: 0;
-}
-
-li {
-  display: inline-block;
-  margin: 0 10px;
-}
-
-a {
-  color: #42b983;
-}
 </style>

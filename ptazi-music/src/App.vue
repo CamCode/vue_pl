@@ -5,28 +5,19 @@
         <div class="columns">
           <div class="column">
             <div class="field">
-              <label class="label">Nueva Tarea</label>
+              <label class="label">Buscar canción</label>
               <div class="control">
                 <input class="is-large input"
-                placeholder="Agregar nueva tarea..."
+                placeholder="Buscar canción..."
                 type="text"
-                v-model="newTask.title">
-              </div>
-            </div>
-            <div class="field">
-              <label class="label">Tiempo</label>
-              <div class="control">
-                <input class="is-large input"
-                placeholder="0h..."
-                type="number"
-                v-model="newTask.time">
+                v-model="searchQuery">
               </div>
             </div>
             <div class="field is-grouped">
               <p class="control">
                 <a class="button is-primary"
-                 @click="addTask()">
-                 Agregar Tarea
+                 @click="search()">
+                 Buscar
                  </a>
               </p>
               <p class="control">
@@ -36,21 +27,12 @@
             </div>
           </div>
           <div class="column">
-            <div class="notification is-info">
-              {{totalTime}}
-            </div>
             <div class="notification is-info"
-            v-for="t in tasks"
+            v-for="t in tracks"
             :key="t.id">
-            <button class="delete"
-            @click="deleteTask(t.id)"></button>
-              {{t.title}} => {{t.time}}
+            <button class="delete"></button>
+              {{t.artists[0].name}} - {{t.name}}
             </div>
-            <!-- <ul>
-              <li>Tarea 1</li>
-              <li>Tarea 2</li>
-              <li>Tarea 3</li>
-            </ul> -->
           </div>
         </div>
       </div>
@@ -59,52 +41,23 @@
 </template>
 
 <script>
+import trackService from './services/track.js'
 export default {
   name: 'app',
   data () {
     return {
-      name: '',
-      tasks: [],
-      newTask: {
-        title: '',
-        time: 0
-      }
-    }
-  },
-  computed: {
-    totalTime () {
-      let totalTime = 0
-      this.tasks.forEach(e => {
-        totalTime += parseInt(e.time)
-      })
-      return totalTime
+      searchQuery: '',
+      tracks: []
     }
   },
   methods: {
-    addTask () {
-      if (this.newTask.title !== '' && this.newTask.time !== 0) {
-        let info = {
-          title: this.newTask.title,
-          time: this.newTask.time
-        }
-        // agrega nueva tarea al arreglo de tasks
-        this.tasks.push(info)
-        // Almacenamos el array en localStorage
-        // El método JSON.stringify() convierte un valor dado en javascript a una cadena  JSON
-        localStorage.setItem('tasks', JSON.stringify(this.tasks))
-        console.log(localStorage.setItem('tasks', JSON.stringify(this.tasks)))
-        this.newTask.title = ''
-        this.newTask.time = 0
+    search () {
+      if (!this.searchQuery) {
+        trackService.search(this.searchQuery).then(res => {
+          this.tracks = res.tracks.items
+          console.log(res)
+        })
       }
-    },
-    cancel () {
-      this.newTask.title = ''
-      this.newTask.time = 0
-    },
-    deleteTask (id) {
-      console.log(id)
-      this.tasks.splice(id, 1)
-      localStorage.setItem('tasks', JSON.stringify(this.tasks))
     }
   }
 }

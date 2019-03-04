@@ -1,5 +1,6 @@
 <template>
   <div id="app">
+    <pm-header></pm-header>
     <section class="section">
       <div class="container">
         <div class="columns">
@@ -36,14 +37,18 @@
           </div>
         </div>
       </div>
+      <pm-footer></pm-footer>
     </section>
   </div>
 </template>
 
 <script>
 import trackService from './services/track.js'
+import PmFooter from './components/layout/Footer.vue'
+import PmHeader from './components/layout/Header.vue'
 export default {
   name: 'app',
+  components: { PmFooter, PmHeader },
   data () {
     return {
       searchQuery: '',
